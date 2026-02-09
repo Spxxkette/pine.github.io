@@ -17,7 +17,7 @@ Author profiles generally include new editions, translations and significant rep
 
 ###### Directions
 
-Clicking on Read More would lead you to the author's profile.
+Clicking on Read More would lead you to the author's profile.Clicking below.
 
 <div class="authors">
 {% include browse-authors-copy.html %}
