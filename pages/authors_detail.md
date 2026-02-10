@@ -3,6 +3,7 @@ layout: pagedefault
 title: Profile
 permalink: /stakeholder/
 ---
+
 <head>
     <link rel="stylesheet" type="text/css" href="{{site.baseurl}}/assets/css/includes-style/browse-author-style.css">
     </head>
@@ -12,11 +13,9 @@ permalink: /stakeholder/
 </div>
 
 <!-- same data source -->
-<script id="DATA" type="application/json">
+<script id="stakeholders-data" type="application/json">
   {{ site.data["biography"] | jsonify }}
 </script>
-
-
 
 <script>
 (function(){
@@ -36,7 +35,7 @@ permalink: /stakeholder/
   }
 
   function readData() {
-    try { return JSON.parse(document.getElementById("DATA").textContent) || []; }
+    try { return JSON.parse(document.getElementById("stakeholders-data").textContent) || []; }
     catch(e){ console.error(e); return []; }
   }
 
@@ -52,15 +51,29 @@ permalink: /stakeholder/
   const DATA = RAW.map(row => {
     const out = {};
     for (const h of HEADERS) out[h.key] = safe(row[h.original]);
-    out.slug = slugify(out.name  || out.title || out.name_ || out["name_"] );
+    out.slug = slugify(out.name || out.title || out.name_ || out["name_"]);
     return out;
   });
+
+
+
 
   // locate by slug
   const id = getParam("id");
   if (!id) { root.innerHTML = "<p>Missing id.</p>"; return; }
   const item = DATA.find(r => r.slug === id);
-  if (!item) { root.innerHTML = "<p>Not  found.</p>"; return; }
+  if (!item) { root.innerHTML = "<p>Not found.</p>"; return; }
+
+//Loading  publications,dLOC, and other dataset
+//EDIT HERE TO CHANGE DATASETS
+const masterPublications = {{site.data.publocation | sort:"Pubdate" | jsonify}};
+
+const masterDLOC = {{site.data.additional-resources | jsonify}}
+
+//Apply a filter to the additional datasets in order to lookup matching data fields to id,title etc.
+const authorPublications = masterPublications.filter(r => r.authorid === item.authorid);
+const authorDLOC = masterDLOC.filter(r => r.authorid === item.authorid);
+
 
   // fields (use your actual column set; these match the earlier script)
   const name       = item.name || "(No Name)";
@@ -69,23 +82,227 @@ permalink: /stakeholder/
   const lifespan   = item.lifespan;
   const genreType  = item.genre_type;
   const wiki       = item.wikipedia_url_if_applicable;
-  const imageUrl   = item.image_url || item.image || "{{site.baseurl}}/authorphotos/" + item.authorid + ".jpg" ||"{{site.baseurl}}/assets/img/unknown_person.jpg";
+  const imageUrl   = item.image_url;
   const dlocUrl    = item.dloc_items_url;
   const awards     = item.awards;
   const mediaAbout = item.media_about_them;
   const website    = item.website || item.site || ""; // just in case
 
 
-
-
-
-
-//DATA
-
-  console.log(item);
+console.log(item);
   // render detail view
-  root.innerHTML = `<p>Hello World</p>`;
-});
+  root.innerHTML = `
+<!-- The div element that controls -->
+<div class="row justify-content-center">
+
+    <!--This create the first column div-->
+    
+    <div class="col" style="position:relative;">
+    
+    <!-- Creates a container so that the author's profile photo side can scroll independtly of the book details -->
+       <p class="backlink"><a href="{{site.baseurl}}/authors/">← Back to Main Page</a></p>
+    
+      <p>Hello World</p>
+        <!-- 1st column containing the Author's Biography and Related Resources-->
+        <div class="authorbiodata" style="position: sticky; top: 68px;">
+            <div height="700px" width="500px">
+            <h1 class="detail-title">${name}</h1>
+             ${lifespan  ? `<span><strong>Lifespan:</strong> ${lifespan}</span>` : ""}
+            ${country   ? `<p><strong>Country:</strong> ${country}</p>` : ""}
+            ${genreType ? `<span><strong>Genre/Type:</strong> ${genreType}</span>` : ""}
+            <div class="detail-media">
+                <img src="${imageUrl}" />
+            </div>
+            <div>
+              
+            </div>
+          <div class="detail-links">
+              ${website ? `<a href="${website}" target="_blank" rel="noopener">Website</a>` : ""}
+              ${wiki    ? `<a href="${wiki}" target="_blank" rel="noopener">Wikipedia</a>` : ""}
+              ${dlocUrl ? `<a href="${dlocUrl}" target="_blank" rel="noopener">DLOC items</a>` : ""}
+            </div>   
+        <br>
+        
+      
+      
+           
+            </div>
+        </div>
+    </div>
+       
+    
+      <!-- Creates the 2nd column containing the Author's Publication(s) details-->
+    <!-- For it to fully put in two columns i need to populate this into the div above -->
+     <div class="col">
+     
+    <!-- Creates an collapse menu using Bootstrap -->
+    
+    <div class="accordion" id="creativeContribution">
+    <div class="accordion-item">
+    <h2 class="accordion-header">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#creativeContributionCollapse"  aria-controls="creativeContributionCollapse">
+    Publication(s)
+    </button>
+    </h2>
+    <div id="creativeContributionCollapse" class="accordion-collapse collapse" data-bs-parent="creativeContributionCollapse">
+    <div id="creativeContributionBody" class="accordion-body">
+   
+    </div>
+    </div>
+    
+    
+    <div class="accordion" id="creativeDLOC">
+    <div class="accordion-item">
+    <h2 class="accordion-header">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#creativeDLOCCollapse"  aria-controls="creativeDLOCCollapse">
+    Resources at Digital Library of The Caribbean
+    </button>
+    </h2>
+    <div id="creativeDLOCCollapse" class="accordion-collapse collapse" data-bs-parent="creativeDLOCCollapse">
+      <div id="creativeDLOCBody" class="accordion-body">
+
+      </div>      
+    </div>
+    
+    
+    
+    <div class="accordion" id="creativeMedia">
+    <div class="accordion-item">
+    <h2 class="accordion-header">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#creativeMediaCollapse"  aria-controls="creativeMediaCollapse">
+    Media About ${name}
+    </button>
+    </h2>
+    <div id="creativeMediaCollapse" class="accordion-collapse collapse" data-bs-parent="creativeMediaCollapse">
+      <div class="accordion-body">
+  
+      </div>      
+    </div>
+    
+    
+    
+    
+    
+    
+    <!-- end tag for div that makes this two column-->
+    </div>
+    
+    </div>
+
+ `;
+
+ //Breaking up the HTML in order to loop through all publications, dloc and any other data related to a specfic individual's profile.As well as since Jekyll is static built oriented and this functionailty is calling for a dynamic solution.
+  const publicationCollapse = document.getElementById("creativeContributionBody");
+  const dlocCollapse = document.getElementById("creativeDLOCBody");
+
+authorPublications.forEach(
+  details => {
+
+ publicationCollapse.innerHTML += `
+<div class="books">
+   
+    <h3 class="publication_date"><b>Published in ${details.Pubdate}</b></h3>
+
+            <div id="publicationImageContainer">
+            <img class="bookphoto" src="{{site.baseurl}}/bookphotos/${item.authorid}/${details.bookImgId}.jpg" />
+            </div>
+
+            <div class="book_details">
+            <h4 class="publication_title"><b><i>a${details.Title}</i></b></h4>
+           
+            <div class="publication_summary text_truncate">
+                <p class="text-truncate">${details.Summary}</p>
+              </div>
+              <hr />
+            <div class="publication_details">
+              <p class="publication_genre">
+               
+            <b><a href="{{site.baseurl}}{{genre.url}}">${details.Genre}</a></b>,<b><span>${details.Sub_Genre}</span></b>
+                </p>
+                <p class="publication_language"><b><a href="{{site.baseurl}}{{language.url}}/">${details.Language}</a></b></p>
+       
+                 <p class="publication_publisher"><b>${details.Publisher}</b></p>
+                 <p class="publication_translation"><b>${details.Translation}</b></p>
+             </div>
+        </div>
+
+        <p class="publicationResourceLinks">
+                <span><a id="Buy" href="${details.Buy_Link}" target="_blank">Buy</a></span>
+                <span>|</span>
+                <span><a id="Read" href="${details.Read_Link}" target="_blank">Read</a></span>
+                <span>|</span>
+                <span><a id="Listen" href="${details.Listen_Link}" target="_blank">Listen</a></span>
+              </p>
+<hr />
+</div>
+
+`});
+
+authorDLOC.forEach(
+
+details => {
+
+switch(details.resource_type){
+
+case "video" :
+dlocCollapse.innerHTML += `
+<h1>${details.resource_title}</h1>
+ <video class="w-75 h-75" controls >
+            <source src="${details.resource_url}">
+        </video>
+ <a href="${details.resource_source_url}" target="_blank"><p>View Resource Courtsey of dLOC</p></a>
+
+`;
+break;
+case "audio" :
+  dlocCollapse.innerHTML += `
+<h1>${details.resource_title}</h1>
+  <audio controls>
+            <source src="${details.resource_url}">
+        </audio>
+ <a href="${details.resource_source_url}" target="_blank"><p>View Resource Courtsey of dLOC</p></a>
+
+`;
+break;
+case "image":
+   dlocCollapse.innerHTML += `
+  <h1>${details.resource_title}</h1>
+<div class="d-flex">
+<img src="${details.resource_url}" />
+</div>
+ <a href="${details.resource_source_url}" target="_blank"><p>View Resource Courtsey of dLOC</p></a>
+
+`;
+break;
+case "pdf":
+     dlocCollapse.innerHTML += `
+  <h1>${details.resource_title}</h1>
+<a href="${details.resource_source_url}" target="_blank"><p>View PDF Resource Courtsey of dLOC</p></a>
+`;
+break;
+case "website":
+       dlocCollapse.innerHTML += `
+  <h1>${details.resource_title}</h1>
+  <iframe width="100%" height="50%" src="${details.resource_url}"></iframe>
+        <hr />
+<a href="${details.resource_source_url}" target="_blank"><p>View Resource Courtsey of dLOC</p></a>
+`;
+break;
+case "embed":
+         dlocCollapse.innerHTML += `
+  <h1>${details.resource_title}</h1>
+  ${details.resource_url}
+<a href="${details.resource_source_url}" target="_blank"><p>View Resource Courtsey of dLOC</p></a>
+`;
+break;
+default: 
+dlocCollapse.innerHTML += `
+<p>No dLOC Resources Located</p>
+
+`;
+}});
+
+})();
 </script>
 
 <style>
