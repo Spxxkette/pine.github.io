@@ -1,6 +1,6 @@
 ---
 layout: pagedefault
-title: Profile
+title: Author Profile
 permalink: /stakeholder/
 ---
 
@@ -95,40 +95,38 @@ console.log(item);
 <!-- The div element that controls -->
 <div class="row justify-content-center">
 
+ <p class="backlink"><a href="{{site.baseurl}}/authors/">← Back to Main Page</a></p>
     <!--This create the first column div-->
     
     <div class="col" style="position:relative;">
     
     <!-- Creates a container so that the author's profile photo side can scroll independtly of the book details -->
-       <p class="backlink"><a href="{{site.baseurl}}/authors/">← Back to Main Page</a></p>
+
     
-      <p>Hello World</p>
         <!-- 1st column containing the Author's Biography and Related Resources-->
         <div class="authorbiodata" style="position: sticky; top: 68px;">
-            <div height="700px" width="500px">
-            <h1 class="detail-title">${name}</h1>
-             ${lifespan  ? `<span><strong>Lifespan:</strong> ${lifespan}</span>` : ""}
-            ${country   ? `<p><strong>Country:</strong> ${country}</p>` : ""}
-            ${genreType ? `<span><strong>Genre/Type:</strong> ${genreType}</span>` : ""}
-            <div class="detail-media">
-                <img src="${imageUrl}" />
-            </div>
-            <div>
-              
-            </div>
-          <div class="detail-links">
-              ${website ? `<a href="${website}" target="_blank" rel="noopener">Website</a>` : ""}
-              ${wiki    ? `<a href="${wiki}" target="_blank" rel="noopener">Wikipedia</a>` : ""}
-              ${dlocUrl ? `<a href="${dlocUrl}" target="_blank" rel="noopener">DLOC items</a>` : ""}
-            </div>   
-        <br>
+        <div height="700px" width="500px">
+            <h3>${name}</h3>
+        <div class="authorimg">
+            <img src="{{site.baseurl}}/authorphotos/${item.authorid}.jpg" />
+        </div>   
+    <br>
+    
+  
+    <div class="authordetails">
+    <h6> <b>Country of Birth: </b><a href="{{ site.baseurl }}/countries/${item.mapid}/">${country}</a> <br>
+        <b>Lifespan:</b> ${lifespan} <br>
+       
+        <p>Read furthur details on the author's biography<a class="bioResourceLinks" href="${item.wikimedia}" target="_blank" > -sourced from Wikipedia</a></p>
         
-      
-      
-           
-            </div>
+        </h6>
+    </div>
+       
         </div>
     </div>
+</div>
+   
+        
        
     
       <!-- Creates the 2nd column containing the Author's Publication(s) details-->
@@ -208,18 +206,18 @@ authorPublications.forEach(
             </div>
 
             <div class="book_details">
-            <h4 class="publication_title"><b><i>a${details.Title}</i></b></h4>
+            <h4 class="publication_title"><b><i>${details.Title}</i></b></h4>
            
             <div class="publication_summary text_truncate">
-                <p class="text-truncate">${details.Summary}</p>
+                <p class="text-wrap text-truncate">${details.Summary}</p>
               </div>
               <hr />
             <div class="publication_details">
               <p class="publication_genre">
                
-            <b><a href="{{site.baseurl}}{{genre.url}}">${details.Genre}</a></b>,<b><span>${details.Sub_Genre}</span></b>
+            <b><a href="{{site.baseurl}}/${encodeURIComponent(details.Genre)}">${details.Genre}</a></b>
                 </p>
-                <p class="publication_language"><b><a href="{{site.baseurl}}{{language.url}}/">${details.Language}</a></b></p>
+                <p class="publication_language"><b><a href="{{site.baseurl}}/${encodeURIComponent(details.Language)}">${details.Language}</a></b></p>
        
                  <p class="publication_publisher"><b>${details.Publisher}</b></p>
                  <p class="publication_translation"><b>${details.Translation}</b></p>
@@ -251,7 +249,7 @@ dlocCollapse.innerHTML += `
             <source src="${details.resource_url}">
         </video>
  <a href="${details.resource_source_url}" target="_blank"><p>View Resource Courtsey of dLOC</p></a>
-
+<hr />
 `;
 break;
 case "audio" :
@@ -261,7 +259,7 @@ case "audio" :
             <source src="${details.resource_url}">
         </audio>
  <a href="${details.resource_source_url}" target="_blank"><p>View Resource Courtsey of dLOC</p></a>
-
+<hr />
 `;
 break;
 case "image":
@@ -271,21 +269,22 @@ case "image":
 <img src="${details.resource_url}" />
 </div>
  <a href="${details.resource_source_url}" target="_blank"><p>View Resource Courtsey of dLOC</p></a>
-
+<hr />
 `;
 break;
 case "pdf":
      dlocCollapse.innerHTML += `
   <h1>${details.resource_title}</h1>
 <a href="${details.resource_source_url}" target="_blank"><p>View PDF Resource Courtsey of dLOC</p></a>
+<hr />
 `;
 break;
 case "website":
        dlocCollapse.innerHTML += `
   <h1>${details.resource_title}</h1>
   <iframe width="100%" height="50%" src="${details.resource_url}"></iframe>
-        <hr />
 <a href="${details.resource_source_url}" target="_blank"><p>View Resource Courtsey of dLOC</p></a>
+<hr />
 `;
 break;
 case "embed":
@@ -293,6 +292,7 @@ case "embed":
   <h1>${details.resource_title}</h1>
   ${details.resource_url}
 <a href="${details.resource_source_url}" target="_blank"><p>View Resource Courtsey of dLOC</p></a>
+<hr />
 `;
 break;
 default: 
