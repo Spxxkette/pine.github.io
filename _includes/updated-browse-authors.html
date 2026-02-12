@@ -350,8 +350,8 @@
     const frag = document.createDocumentFragment();
     list.forEach(row => {
       const name = row.name || row.title || "(No Name)";
-      const img  = row.image_url || row.image || "{{site.baseurl}}/authorphotos/" + row.authorid + ".jpg" ||"";
-      const href = `{{site.baseurl}}/stakeholder/?id=${encodeURIComponent(row.slug)}`;
+      const img  = row.image_url || row.image || "{{site.baseurl}}/authorphotos/" + row.authorid + ".jpg" ||"{{site.baseurl}}/assets/img/wikimedia_logo.png";
+      const href = `{{site.baseurl}}/profile/?id=${encodeURIComponent(row.authorid)}`;
     
       console.log(row.slug);
   
@@ -359,7 +359,7 @@
       const li = document.createElement("li");
       li.className = "stakeholder-tile";
       li.innerHTML = `
-        <a class="tile-link" href="${href}" aria-label="View ${name}">
+     <a class="tile-link" href="${href}" aria-label="View ${name}">
           <div class="tile-image">
             
             ${img ? `<img class="img-fluid" src="${img}" alt="${name}">`
@@ -369,6 +369,7 @@
           </div>
           <div class="tile-name">${name}</div>
         </a>
+
       `;
       frag.appendChild(li);
     });

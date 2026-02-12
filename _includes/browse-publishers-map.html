@@ -116,7 +116,7 @@ function mapIcon(url){
             </div>
             <div class="publicationData">
               <p>${book.properties.Title}</p>
-              <a href="{{site.baseurl}}/authors/${book.properties.authorid}/"><p>${book.properties.Author}</p></a>
+              <a href="{{site.baseurl}}/profile/?id=${encodeURIComponent(book.properties.authorid)}"><p>${book.properties.Author}</p></a>
               <a href="{{site.baseurl}}/${book.properties.Genre}/"><p>${book.properties.Genre}</p></a>
               <p>${book.properties.Pubdate}</p>
               <a href="{{site.baseurl}}/${book.properties.Language}/"><p>${book.properties.Language}</p></a>

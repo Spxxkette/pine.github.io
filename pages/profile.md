@@ -1,7 +1,7 @@
 ---
 layout: pagedefault
 title: Author Profile
-permalink: /stakeholder/
+permalink: /profile/
 ---
 
 <head>
@@ -29,11 +29,14 @@ permalink: /stakeholder/
     .normalize("NFKD").replace(/[\u0300-\u036f]/g,"")
     .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
 
+
+//This creates a URL parameter that will be used to dynamically load the dataset and allows for a bettery history navigation than the previous
   function getParam(name){
     const url = new URL(window.location.href);
     return url.searchParams.get(name);
   }
 
+//Gathering the data loaded by Jekyll in a script tag above this one
   function readData() {
     try { return JSON.parse(document.getElementById("stakeholders-data").textContent) || []; }
     catch(e){ console.error(e); return []; }
@@ -57,11 +60,16 @@ permalink: /stakeholder/
 
 
 
+  //This section is what is used to load up the datasets related to the selected author.
 
-  // locate by slug
   const id = getParam("id");
+  //If id does not cointain a value it will return this messages
   if (!id) { root.innerHTML = "<p>Missing id.</p>"; return; }
-  const item = DATA.find(r => r.slug === id);
+
+    // locate by authorid
+  const item = DATA.find(r => r.authorid === id);
+
+  //If id does not match our dataset it will return
   if (!item) { root.innerHTML = "<p>Not found.</p>"; return; }
 
 //Loading  publications,dLOC, and other dataset
@@ -95,7 +103,7 @@ console.log(item);
 <!-- The div element that controls -->
 <div class="row justify-content-center">
 
- <p class="backlink"><a href="{{site.baseurl}}/authors/">← Back to Main Page</a></p>
+ <p class="backlink"><a href="{{site.baseurl}}/authors/">← Browse Authors</a></p>
     <!--This create the first column div-->
     
     <div class="col" style="position:relative;">
@@ -265,8 +273,8 @@ break;
 case "image":
    dlocCollapse.innerHTML += `
   <h1>${details.resource_title}</h1>
-<div class="d-flex">
-<img src="${details.resource_url}" />
+  <div id="publicationImageContainer">
+  <img class="bookphoto" src="${details.resource_url}" />
 </div>
  <a href="${details.resource_source_url}" target="_blank"><p>View Resource Courtsey of dLOC</p></a>
 <hr />

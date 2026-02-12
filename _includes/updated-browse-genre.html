@@ -358,7 +358,7 @@ function render(list) {
     const name = row.name || row.title || "(No Name)";
     const img  = row.image_url || row.image || "{{site.baseurl}}/authorphotos/" + row.authorid + ".jpg" ||"";
     const idSlug = slugify(row.author);
-    const href = `{{site.baseurl}}/stakeholder/?id=${encodeURIComponent(idSlug)}`;
+    const href = `{{site.baseurl}}/profile/?id=${encodeURIComponent(row.authorid)}`;
   
     
   
